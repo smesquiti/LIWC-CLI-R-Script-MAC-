@@ -68,8 +68,8 @@ cmd_to_execute <- paste("LIWC-22-cli",
 # Let's go ahead and run this analysis: NOTE this is for a mac. Please refer to ryan's original script for running this on a PC
 
 system(command = cmd_to_execute, #specify the command that we want to run
-      intern=FALSE,       #specify that we do *not* want the output to be returned as an R object
-      wait=TRUE)         #specify that we do, in fact, want to wait for the shell command to finish running before we continue      #we want to halt execution of this R script if something about our call to the shell fails
+       intern=FALSE,       #specify that we do *not* want the output to be returned as an R object
+       wait=TRUE)         #specify that we do, in fact, want to wait for the shell command to finish running before we continue      #we want to halt execution of this R script if something about our call to the shell fails
 
 
 
@@ -88,7 +88,7 @@ df <- as.data.frame(liwc.data)#can save it as a data frame in R too
 
 # We can specify whether we want to use the LIWC2001, LIWC2007, LIWC2015,
 # or LIWC22 dictionary with the --dictionary argument. these are located here: https://www.liwc.app/dictionaries
- liwcDict <- "LIWC2015" #to change to the old LIWC
+liwcDict <- "LIWC2015" #to change to the old LIWC
 
 # Alternatively, you can specify the absolute path to an external dictionary
 # file that you would like to use, and LIWC will load this dictionary for processing.
@@ -98,7 +98,7 @@ df <- as.data.frame(liwc.data)#can save it as a data frame in R too
 ###
 
 # Let's update our output location as well so that we don't overwrite our previous file.
-outputLocation = "C:/Users/Ryan/Datasets/TED Talk TXT Files - Analyzed (LIWC2015).csv"
+outputLocation = "/Users/stevenmesquiti/Desktop/Yoona\'s\ Files/LIWC\ CLI - Analyzed.csv"
 
 cmd_to_execute <- paste("LIWC-22-cli",
                         "--mode", "wc",
@@ -145,7 +145,7 @@ outputLocation <- '/Users/stevenmesquiti/Desktop/CEO\ Project/Masterdatasets/CLI
 
 cmd_to_execute <- paste("LIWC-22-cli",
                         "--mode", "wc",
-                        "--row-id-indices", "1",
+                        "--row-id-indices", "1,2,3,4,5",
                         "--column-indices", "6", #you'll need to know how your data is formatted. That is, know the column your text is in
                         "--input", shQuote(inputFileCSV, type=shellType),
                         "--output", shQuote(outputLocation, type=shellType),
@@ -157,7 +157,6 @@ system(command = cmd_to_execute, #specify the command that we want to run
        intern=FALSE,       #specify that we do *not* want the output to be returned as an R object
        wait=TRUE)  
 
-liwc.data <- read.csv(outputLocation, fileEncoding = 'UTF-8') #saving our output 
 
 # We will see the following in the terminal as LIWC does its magic:
 #   Processing:
@@ -166,6 +165,30 @@ liwc.data <- read.csv(outputLocation, fileEncoding = 'UTF-8') #saving our output
 #[========================================] 100.00%; Number of Rows Analyzed: 11.0K; Total Words Analyzed: 2.49M
 
 #Done. Please examine results in /Users/stevenmesquiti/Desktop/CEO Project/Masterdatasets/CLI_analyzed.csv
+
+liwc.data <- read.csv(outputLocation, fileEncoding = 'UTF-8') #saving our output 
+
+
+#separate ID Column using dplyr So we can work with the CEO data
+ncols <- max(stringr::str_count(liwc.data$Row.ID, ";")) + 1 #separated by ;
+
+ncols
+
+#generate necessary column names
+colmn <- paste("col", 1:ncols)
+
+#[1] "col 1" "col 2" "col 3"
+
+df <-
+  tidyr::separate(
+    data = liwc.data,
+    col = Row.ID,
+    sep = ";",
+    into = colmn, #how many additional columns 
+    remove = FALSE
+  )
+
+
 
 
 

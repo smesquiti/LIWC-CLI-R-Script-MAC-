@@ -1,2 +1,2 @@
 # LIWC-CLI-R-Script-MAC-
-R Script that I adapted from work by the incomparable Ryan Boyd 
+I just adapted this from Ryan to work for Mac's and don't take credit for this in any way shape or form :) 
